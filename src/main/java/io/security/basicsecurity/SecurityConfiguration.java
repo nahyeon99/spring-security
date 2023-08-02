@@ -35,17 +35,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http // 인증 API
                 .formLogin();
         http
-                /**
-                 * 세션 정책 API
-                 * http.sessionManagement()
-                 *      .sessionCreationPolicy(Session.CreationPolicy.If_Required)
-                 * Always : 스프링 시큐리티가 항상 세션 생성
-                 * If_Required : 스프링 시큐리티가 필요 시 생성 (default)
-                 * Never : 스프링 시큐리티가 생성하지 않지만, 이미 존재하면 사용
-                 * Stateless : 생성하지 않고, 존재해도 사용하지 않음,
-                 *             JWT 인증 방식 같이 아예 세션을 사용하지 않는 방식은 이 방식을 사용한다.
-                 */
-                .sessionManagement() // 세션 관리 기능이 작동한다.
-                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED);
+                .sessionManagement()
+                .maximumSessions(1)
+//                .maxSessionsPreventsLogin(true) // case2: 동시 로그인 차단, 추가 로그인한 유저를 차단함으로써 추가 세션 생성을 막는다.
+                .maxSessionsPreventsLogin(false) // case1: default 기존 세션을 차단하고, 추가 인증 요청한 유저의 세션을 생성한다.
+        ;
     }
 }
