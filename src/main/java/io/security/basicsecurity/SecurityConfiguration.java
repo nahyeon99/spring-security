@@ -34,8 +34,18 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http // 인증 API
                 .formLogin();
         http
-                .sessionManagement()
-                .maximumSessions(1)
-                .maxSessionsPreventsLogin(true); // true: 동시 사용자 추가 로그인 시 차단/ default는 false, 기존 세션을 만료시킨다.
+                /**
+                 * 세션 고정 보호 API
+                 * 1. servlet 3.1 이상 default, 공격자의 세션 ID는 무용지물이 되고, 새 유저가 인증 시 새로운 세션 ID를 제공한다.
+                 * .sessionFixation().changeSessionId()
+                 * 2. 동시 로그인 접속자에게 동일한 세션 ID를 제공한다.
+                 * .sessionFixation().none()
+                 * 3. servlet 3.1 이하 default, 새로운 세션을 생성 후 migrate
+                 * .sessionFixation().migrateSession()
+                 * 4. 새로운 세션을 생성한다.
+                 * .sessionFixation().newSession()
+                 */
+                .sessionManagement() // 세션 관리 기능이 작동한다.
+                .sessionFixation().changeSessionId();
     }
 }
