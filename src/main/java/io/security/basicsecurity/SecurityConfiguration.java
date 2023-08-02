@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -35,17 +36,16 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .formLogin();
         http
                 /**
-                 * 세션 고정 보호 API
-                 * 1. servlet 3.1 이상 default, 공격자의 세션 ID는 무용지물이 되고, 새 유저가 인증 시 새로운 세션 ID를 제공한다.
-                 * .sessionFixation().changeSessionId()
-                 * 2. 동시 로그인 접속자에게 동일한 세션 ID를 제공한다.
-                 * .sessionFixation().none()
-                 * 3. servlet 3.1 이하 default, 새로운 세션을 생성 후 migrate
-                 * .sessionFixation().migrateSession()
-                 * 4. 새로운 세션을 생성한다.
-                 * .sessionFixation().newSession()
+                 * 세션 정책 API
+                 * http.sessionManagement()
+                 *      .sessionCreationPolicy(Session.CreationPolicy.If_Required)
+                 * Always : 스프링 시큐리티가 항상 세션 생성
+                 * If_Required : 스프링 시큐리티가 필요 시 생성 (default)
+                 * Never : 스프링 시큐리티가 생성하지 않지만, 이미 존재하면 사용
+                 * Stateless : 생성하지 않고, 존재해도 사용하지 않음,
+                 *             JWT 인증 방식 같이 아예 세션을 사용하지 않는 방식은 이 방식을 사용한다.
                  */
                 .sessionManagement() // 세션 관리 기능이 작동한다.
-                .sessionFixation().changeSessionId();
+                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED);
     }
 }
