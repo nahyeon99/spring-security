@@ -15,4 +15,9 @@ public class HomeController {
     public String login() throws Exception {
         return "login";
     }
+
+    @GetMapping(value="/accounts")
+    public String register() throws Exception {
+        return "accounts";
+    }
 }
