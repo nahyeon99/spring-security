@@ -1,6 +1,6 @@
 package io.security.basicsecurity.security.provider;
 
-import io.security.basicsecurity.common.FormWebAuthenticationDetails;
+import io.security.basicsecurity.security.common.FormWebAuthenticationDetails;
 import io.security.basicsecurity.security.service.AccountContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;

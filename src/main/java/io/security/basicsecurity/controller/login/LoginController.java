@@ -1,4 +1,4 @@
-package io.security.basicsecurity.login;
+package io.security.basicsecurity.controller.login;
 
 import io.security.basicsecurity.domain.Account;
 import org.springframework.security.core.Authentication;

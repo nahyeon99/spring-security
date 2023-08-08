@@ -1,6 +1,6 @@
 package io.security.basicsecurity.security.configs;
 
-import io.security.basicsecurity.common.FormWebAuthenticationDetailsSource;
+import io.security.basicsecurity.security.common.FormWebAuthenticationDetailsSource;
 import io.security.basicsecurity.security.handler.CommonAccessDeniedHandler;
 import io.security.basicsecurity.security.handler.FormAuthenticationFailureHandler;
 import io.security.basicsecurity.security.handler.FormAuthenticationSuccessHandler;
