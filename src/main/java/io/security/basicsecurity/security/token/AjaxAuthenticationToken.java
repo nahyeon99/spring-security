@@ -1,7 +1,6 @@
 package io.security.basicsecurity.security.token;
 
 import org.springframework.security.authentication.AbstractAuthenticationToken;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.SpringSecurityCoreVersion;
 import org.springframework.util.Assert;
@@ -33,13 +32,13 @@ public class AjaxAuthenticationToken extends AbstractAuthenticationToken {
         super.setAuthenticated(true); // must use super, as we override
     }
 
-    public static UsernamePasswordAuthenticationToken unauthenticated(Object principal, Object credentials) {
-        return new UsernamePasswordAuthenticationToken(principal, credentials);
+    public static AjaxAuthenticationToken unauthenticated(Object principal, Object credentials) {
+        return new AjaxAuthenticationToken(principal, credentials);
     }
 
-    public static UsernamePasswordAuthenticationToken authenticated(Object principal, Object credentials,
+    public static AjaxAuthenticationToken authenticated(Object principal, Object credentials,
                                                                     Collection<? extends GrantedAuthority> authorities) {
-        return new UsernamePasswordAuthenticationToken(principal, credentials, authorities);
+        return new AjaxAuthenticationToken(principal, credentials, authorities);
     }
 
     @Override
