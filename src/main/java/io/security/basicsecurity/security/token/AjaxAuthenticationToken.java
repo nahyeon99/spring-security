@@ -1,66 +1,18 @@
 package io.security.basicsecurity.security.token;
 
-import org.springframework.security.authentication.AbstractAuthenticationToken;
+import io.security.basicsecurity.security.domain.UserDto;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.SpringSecurityCoreVersion;
-import org.springframework.util.Assert;
 
 import java.util.Collection;
 
-public class AjaxAuthenticationToken extends AbstractAuthenticationToken {
+public class AjaxAuthenticationToken extends UsernamePasswordAuthenticationToken {
 
-    private static final long serialVersionUID = SpringSecurityCoreVersion.SERIAL_VERSION_UID;
-
-    private final Object principal;
-
-    private Object credentials;
-
-    // 인증 객체 생성 시 사용하는 생성자
-    public AjaxAuthenticationToken(Object principal, Object credentials) {
-        super(null);
-        this.principal = principal;
-        this.credentials = credentials;
-        setAuthenticated(false);
+    private AjaxAuthenticationToken(Object principal, Object credentials, Collection<? extends GrantedAuthority> authorities) {
+        super(principal, credentials, authorities);
     }
 
-    // 인증 성공 후 사용하는 생성자
-    public AjaxAuthenticationToken(Object principal, Object credentials,
-                                               Collection<? extends GrantedAuthority> authorities) {
-        super(authorities);
-        this.principal = principal;
-        this.credentials = credentials;
-        super.setAuthenticated(true); // must use super, as we override
-    }
-
-    public static AjaxAuthenticationToken unauthenticated(Object principal, Object credentials) {
-        return new AjaxAuthenticationToken(principal, credentials);
-    }
-
-    public static AjaxAuthenticationToken authenticated(Object principal, Object credentials,
-                                                                    Collection<? extends GrantedAuthority> authorities) {
-        return new AjaxAuthenticationToken(principal, credentials, authorities);
-    }
-
-    @Override
-    public Object getCredentials() {
-        return this.credentials;
-    }
-
-    @Override
-    public Object getPrincipal() {
-        return this.principal;
-    }
-
-    @Override
-    public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
-        Assert.isTrue(!isAuthenticated,
-                "Cannot set this token to trusted - use constructor which takes a GrantedAuthority list instead");
-        super.setAuthenticated(false);
-    }
-
-    @Override
-    public void eraseCredentials() {
-        super.eraseCredentials();
-        this.credentials = null;
+    public static AjaxAuthenticationToken getTokenFromAccountContext(UserDto userDto) {
+        return new AjaxAuthenticationToken(userDto, userDto.getPassword(), userDto.getAuthorities());
     }
 }

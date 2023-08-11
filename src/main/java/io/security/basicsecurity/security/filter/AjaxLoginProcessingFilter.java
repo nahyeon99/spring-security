@@ -1,50 +1,54 @@
 package io.security.basicsecurity.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.security.basicsecurity.domain.AccountDto;
+import io.security.basicsecurity.security.domain.UserDto;
+import io.security.basicsecurity.security.exception.AuthMethodNotSupportedException;
 import io.security.basicsecurity.security.token.AjaxAuthenticationToken;
+import io.security.basicsecurity.util.WebUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.util.StringUtils;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
 
 public class AjaxLoginProcessingFilter extends AbstractAuthenticationProcessingFilter {
+    private static Logger logger = LoggerFactory.getLogger(AjaxLoginProcessingFilter.class);
 
-    private ObjectMapper objectMapper = new ObjectMapper();
-
+    private ObjectMapper objectMapper;
+    
     public AjaxLoginProcessingFilter() {
-        super(new AntPathRequestMatcher("/api/login")); // 요청정보가 맞으면 이 필터가 작동한다.
+        super(new AntPathRequestMatcher("/login", "POST"));
     }
 
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest request,
-                                                HttpServletResponse response) throws AuthenticationException, IOException, ServletException {
-        if (!isAjax(request)) {
-            throw new IllegalStateException("Authentication is not supported");
+    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
+            throws AuthenticationException, IOException {
+
+        if (!HttpMethod.POST.name().equals(request.getMethod()) || !WebUtil.isAjax(request)) {
+            throw new AuthMethodNotSupportedException("Authentication method not supported");
         }
 
-        AccountDto accountDto = objectMapper.readValue(request.getReader(), AccountDto.class);
-        if (StringUtils.isEmpty(accountDto.getUsername()) || StringUtils.isEmpty(accountDto.getPassword())) {
-            throw new IllegalArgumentException("Username or Password is empty");
+        UserDto userDto = objectMapper.readValue(request.getReader(), UserDto.class);
+        userDto.setRoles(Arrays.asList("ROLE_USER"));
+        
+        if (StringUtils.isEmpty(userDto.getUsername()) || StringUtils.isEmpty(userDto.getPassword())) {
+            throw new AuthenticationServiceException("Username or Password not provided");
         }
+        AjaxAuthenticationToken token = AjaxAuthenticationToken.getTokenFromAccountContext(userDto);
 
-        AjaxAuthenticationToken ajaxAuthenticationToken = new AjaxAuthenticationToken(accountDto.getUsername(),
-                accountDto.getPassword());
-
-        return getAuthenticationManager().authenticate(ajaxAuthenticationToken);
+        return this.getAuthenticationManager().authenticate(token);
     }
 
-    private boolean isAjax(HttpServletRequest request) {
-
-        if ("XMLHttpRequest".equals(request.getHeader("X-Requested-with"))) { // ajax 방식
-            return true;
-        }
-        return false;
+    public void setObjectMapper(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
     }
 }

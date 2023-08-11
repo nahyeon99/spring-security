@@ -1,16 +1,11 @@
 spring:
-  security:
-    user:
-      name: user
-      password: 1111
-      roles: USER
   datasource:
     url: jdbc:postgresql://localhost:5432/springboot
     username: nahyeon
     password: pass
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: create
     properties:
       hibernate:
         format_sql: true
@@ -26,3 +21,4 @@ spring:
       enabled: true
   main:
     allow-bean-definition-overriding: true
+    allow-circular-references: true

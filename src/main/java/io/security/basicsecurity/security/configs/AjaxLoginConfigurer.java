@@ -1,5 +1,6 @@
 package io.security.basicsecurity.security.configs;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.security.basicsecurity.security.filter.AjaxLoginProcessingFilter;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.HttpSecurityBuilder;
@@ -71,4 +72,10 @@ public final class AjaxLoginConfigurer<H extends HttpSecurityBuilder<H>> extends
     protected RequestMatcher createLoginProcessingUrlMatcher(String loginProcessingUrl) {
         return new AntPathRequestMatcher(loginProcessingUrl, "POST");
     }
+
+    public AjaxLoginConfigurer<H> readAndWriteMapper(ObjectMapper objectMapper) {
+        getAuthenticationFilter().setObjectMapper(objectMapper);
+        return this;
+    }
+
 }
